@@ -4,13 +4,13 @@ build-backend = "hatchling.build"
 
 [project]
 name = "ecos-api"
-version = "0.1.0"
+version = "0.1.1"
 description = "한국은행 경제통계시스템(ECOS) REST API Python 클라이언트"
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.10"
 authors = [
-    { name = "Sejong", email = "mskim2k@sju.ac.kr" },
+    { name = "Michael M. Kim", email = "mskim2k@sju.ac.kr" },
 ]
 keywords = ["ecos", "bok", "한국은행", "경제통계", "api"]
 classifiers = [
@@ -44,8 +44,8 @@ dev = [
 
 [project.urls]
 Homepage = "https://github.com/michael2k/ecos-api"
-Repository = "https://github.com/sejong/ecos-api"
-Issues = "https://github.com/sejong/ecos-api/issues"
+Repository = "https://github.com/michael2k/ecos-api"
+Issues = "https://github.com/michael2k/ecos-api/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/ecos"]
