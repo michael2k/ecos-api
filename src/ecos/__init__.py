@@ -3,7 +3,14 @@
 from ecos.client import EcosClient
 from ecos.enums import Cycle, Language, ResponseFormat
 from ecos.exceptions import EcosAPIError, EcosError, EcosResponseError
-from ecos.models import KeyStatistic, StatisticItem, StatisticMeta, StatisticTable, StatisticWord
+from ecos.models import (
+    KeyStatistic,
+    StatisticItem,
+    StatisticMeta,
+    StatisticRow,
+    StatisticTable,
+    StatisticWord,
+)
 
 __all__ = [
     "EcosClient",
@@ -16,8 +23,9 @@ __all__ = [
     "KeyStatistic",
     "StatisticItem",
     "StatisticMeta",
+    "StatisticRow",
     "StatisticTable",
     "StatisticWord",
 ]
 
-__version__ = "0.1.0"
+__version__ = "0.1.2"

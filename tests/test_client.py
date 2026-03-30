@@ -1,5 +1,7 @@
 """EcosClient 테스트."""
 
+import os
+
 import httpx
 import pytest
 import respx
@@ -7,7 +9,7 @@ import respx
 from ecos import Cycle, EcosClient, EcosResponseError
 
 
-API_KEY = "test-key"
+API_KEY = os.environ.get("ECOS_API_KEY", "test-key")
 BASE = "https://ecos.bok.or.kr/api"
 
 
@@ -20,7 +22,7 @@ def client():
 class TestSearch:
     @respx.mock
     def test_search_returns_rows(self, client: EcosClient):
-        url = f"{BASE}/StatisticSearch/{API_KEY}/kr/json/1/100/200Y001/A/2020/2023/?/?/?/?"
+        url = f"{BASE}/StatisticSearch/{API_KEY}/json/kr/1/100/200Y001/A/2020/2023/?/?/?/?"
         respx.get(url).respond(
             json={
                 "StatisticSearch": {
@@ -54,7 +56,7 @@ class TestSearch:
 
     @respx.mock
     def test_search_api_error_raises(self, client: EcosClient):
-        url = f"{BASE}/StatisticSearch/{API_KEY}/kr/json/1/100/INVALID/A/2020/2023/?/?/?/?"
+        url = f"{BASE}/StatisticSearch/{API_KEY}/json/kr/1/100/INVALID/A/2020/2023/?/?/?/?"
         respx.get(url).respond(
             json={"RESULT": {"CODE": "ERROR", "MESSAGE": "Invalid stat code"}}
         )
@@ -66,7 +68,7 @@ class TestSearch:
 class TestListTables:
     @respx.mock
     def test_list_tables(self, client: EcosClient):
-        url = f"{BASE}/StatisticTableList/{API_KEY}/kr/json/1/100/"
+        url = f"{BASE}/StatisticTableList/{API_KEY}/json/kr/1/100/"
         respx.get(url).respond(
             json={
                 "StatisticTableList": {
@@ -93,7 +95,7 @@ class TestListTables:
 class TestKeyStatistics:
     @respx.mock
     def test_get_key_statistics(self, client: EcosClient):
-        url = f"{BASE}/KeyStatisticList/{API_KEY}/kr/json/1/100"
+        url = f"{BASE}/KeyStatisticList/{API_KEY}/json/kr/1/100"
         respx.get(url).respond(
             json={
                 "KeyStatisticList": {
@@ -121,7 +123,7 @@ class TestSearchAsync:
     @respx.mock
     @pytest.mark.asyncio
     async def test_search_async(self):
-        url = f"{BASE}/StatisticSearch/{API_KEY}/kr/json/1/100/200Y001/A/2020/2023/?/?/?/?"
+        url = f"{BASE}/StatisticSearch/{API_KEY}/json/kr/1/100/200Y001/A/2020/2023/?/?/?/?"
         respx.get(url).respond(
             json={
                 "StatisticSearch": {

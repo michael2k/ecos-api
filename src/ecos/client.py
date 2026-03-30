@@ -58,16 +58,29 @@ class EcosClient:
     ) -> None:
         self._api_key = api_key
         self._language = language
-        self._sync_client = httpx.Client(base_url=BASE_URL, timeout=timeout)
-        self._async_client = httpx.AsyncClient(base_url=BASE_URL, timeout=timeout)
+        self._timeout = timeout
+        self._sync_client: httpx.Client | None = None
+        self._async_client: httpx.AsyncClient | None = None
+
+    def _get_sync_client(self) -> httpx.Client:
+        if self._sync_client is None:
+            self._sync_client = httpx.Client(base_url=BASE_URL, timeout=self._timeout)
+        return self._sync_client
+
+    def _get_async_client(self) -> httpx.AsyncClient:
+        if self._async_client is None:
+            self._async_client = httpx.AsyncClient(base_url=BASE_URL, timeout=self._timeout)
+        return self._async_client
 
     def close(self) -> None:
         """동기 클라이언트를 닫습니다."""
-        self._sync_client.close()
+        if self._sync_client is not None:
+            self._sync_client.close()
 
     async def aclose(self) -> None:
         """비동기 클라이언트를 닫습니다."""
-        await self._async_client.aclose()
+        if self._async_client is not None:
+            await self._async_client.aclose()
 
     def __enter__(self) -> EcosClient:
         return self
@@ -96,7 +109,7 @@ class EcosClient:
     # ------------------------------------------------------------------
 
     def _build_path(self, service: str, *parts: str | int) -> str:
-        segments = [service, self._api_key, self._language, ResponseFormat.JSON, *parts]
+        segments = [service, self._api_key, ResponseFormat.JSON, self._language, *parts]
         return "/" + "/".join(str(s) for s in segments)
 
     def _parse_response(self, data: dict, root_key: str) -> list[dict]:
@@ -111,13 +124,13 @@ class EcosClient:
         return container.get("row", [])
 
     def _get_sync(self, path: str) -> httpx.Response:
-        resp = self._sync_client.get(path)
+        resp = self._get_sync_client().get(path)
         if resp.status_code != 200:
             raise EcosAPIError(resp.status_code, resp.text)
         return resp
 
     async def _get_async(self, path: str) -> httpx.Response:
-        resp = await self._async_client.get(path)
+        resp = await self._get_async_client().get(path)
         if resp.status_code != 200:
             raise EcosAPIError(resp.status_code, resp.text)
         return resp
